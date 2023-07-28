@@ -9,11 +9,14 @@ import SwiftUI
 
 @main
 struct ProFlixApp: App {
-	@StateObject var coreData = CoreDataEnvironmentObject()
+  @StateObject var coreData = CoreDataEnvironmentObject()
+  @StateObject var appState = AppState()
 
-    var body: some Scene {
-        WindowGroup {
-			ProFlixRootView().environmentObject(coreData)
-        }
+  var body: some Scene {
+    WindowGroup {
+      ProFlixRootView()
+        .environmentObject(coreData)
+        .environmentObject(appState)
     }
+  }
 }
