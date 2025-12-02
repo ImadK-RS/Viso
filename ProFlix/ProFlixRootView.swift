@@ -23,22 +23,8 @@ struct ProFlixRootView: View {
         // After EULA, check authentication
         if appState.isAuthenticated {
           // Show Xtream content tabs
-          NavigationStack(path: $router.navPath) {
-            XtreamMainView()
-              .environmentObject(router)
-          }
-          .navigationDestination(for: NavDestination.self) { destination in
-            switch destination {
-            case .AllPlaylistView:
-              AllPlaylistView()
-            case .AllQuickListView:
-              AllQuickPlayListView()
-            case .StreamListView(let library):
-              StreamListView(library: library)
-            case .VideoPlayerView(let url, let title):
-              VideoPlayerView(url: url, title: title)
-            }
-          }
+          XtreamMainView()
+            .environmentObject(router)
         } else {
           // Show login screen
           LoginView()

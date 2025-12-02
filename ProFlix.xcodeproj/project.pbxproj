@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -62,6 +62,10 @@
 		27EA0B4529ABC6B700A937ED /* StreamAttribute+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA0B4129ABC6B600A937ED /* StreamAttribute+CoreDataClass.swift */; };
 		27EA0B4A29ABCA5C00A937ED /* Stream+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA0B4929ABCA5C00A937ED /* Stream+Extension.swift */; };
 		27EA0B4C29ABCA7500A937ED /* StreamAttribute+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA0B4B29ABCA7500A937ED /* StreamAttribute+Extension.swift */; };
+		2D34D6F82EDF130E0029879A /* PlaybackURLBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D34D6F72EDF130E0029879A /* PlaybackURLBuilder.swift */; };
+		2D34D6FB2EDF16470029879A /* XtreamService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D34D6FA2EDF16470029879A /* XtreamService.swift */; };
+		2D34D6FC2EDF16470029879A /* XtreamModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D34D6F92EDF16470029879A /* XtreamModels.swift */; };
+		2D34D7002EDF29D50029879A /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D34D6FF2EDF29D50029879A /* AppState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -140,7 +144,16 @@
 		27EA0B4129ABC6B600A937ED /* StreamAttribute+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "StreamAttribute+CoreDataClass.swift"; sourceTree = "<group>"; };
 		27EA0B4929ABCA5C00A937ED /* Stream+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Stream+Extension.swift"; sourceTree = "<group>"; };
 		27EA0B4B29ABCA7500A937ED /* StreamAttribute+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StreamAttribute+Extension.swift"; sourceTree = "<group>"; };
+		2D34D6F72EDF130E0029879A /* PlaybackURLBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackURLBuilder.swift; sourceTree = "<group>"; };
+		2D34D6F92EDF16470029879A /* XtreamModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XtreamModels.swift; sourceTree = "<group>"; };
+		2D34D6FA2EDF16470029879A /* XtreamService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XtreamService.swift; sourceTree = "<group>"; };
+		2D34D6FF2EDF29D50029879A /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		2D34D6ED2EDF10ED0029879A /* XtreamContent */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = XtreamContent; sourceTree = "<group>"; };
+		2D34D6EF2EDF10ED0029879A /* XtreamLogin */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = XtreamLogin; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		279386D429A2847000718350 /* Frameworks */ = {
@@ -229,6 +242,8 @@
 		279386D929A2847000718350 /* ProFlix */ = {
 			isa = PBXGroup;
 			children = (
+				2D34D6ED2EDF10ED0029879A /* XtreamContent */,
+				2D34D6EF2EDF10ED0029879A /* XtreamLogin */,
 				2793871329A286C200718350 /* Info.plist */,
 				279386DA29A2847000718350 /* ProFlixApp.swift */,
 				279386DC29A2847000718350 /* Persistence.swift */,
@@ -276,9 +291,13 @@
 		2793871729A28E3C00718350 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				2D34D6FF2EDF29D50029879A /* AppState.swift */,
 				2793872429A2912900718350 /* Constants */,
 				2793871A29A28EAF00718350 /* Themes */,
 				27096D5729C610810068AD43 /* M3UWrapper.swift */,
+				2D34D6F92EDF16470029879A /* XtreamModels.swift */,
+				2D34D6FA2EDF16470029879A /* XtreamService.swift */,
+				2D34D6F72EDF130E0029879A /* PlaybackURLBuilder.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -440,6 +459,10 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				2D34D6ED2EDF10ED0029879A /* XtreamContent */,
+				2D34D6EF2EDF10ED0029879A /* XtreamLogin */,
+			);
 			name = ProFlix;
 			packageProductDependencies = (
 				27EA0B3429ABB95500A937ED /* M3UKit */,
@@ -493,7 +516,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1410;
-				LastUpgradeCheck = 1410;
+				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					279386D629A2847000718350 = {
 						CreatedOnToolsVersion = 14.1;
@@ -574,6 +597,9 @@
 				27CF426C29B715F30057C061 /* QuickPlayStream+CoreDataClass.swift in Sources */,
 				27D62C9E29B48401009A5258 /* ButtonStyles.swift in Sources */,
 				279386DB29A2847000718350 /* ProFlixApp.swift in Sources */,
+				2D34D6FB2EDF16470029879A /* XtreamService.swift in Sources */,
+				2D34D6FC2EDF16470029879A /* XtreamModels.swift in Sources */,
+				2D34D6F82EDF130E0029879A /* PlaybackURLBuilder.swift in Sources */,
 				2793871929A28E5600718350 /* ThemeManager.swift in Sources */,
 				27D62CAD29B4D221009A5258 /* AllPlaylistView.swift in Sources */,
 				27D09A2B29B5052200CCBDFB /* StreamCardView.swift in Sources */,
@@ -606,6 +632,7 @@
 				2768F1D429B3A524004C788C /* SmallCardView.swift in Sources */,
 				27D62CAF29B4D305009A5258 /* SmallRowView.swift in Sources */,
 				2793871029A285A300718350 /* ProFlixRootView.swift in Sources */,
+				2D34D7002EDF29D50029879A /* AppState.swift in Sources */,
 				275D391F29A34BDC0059CD94 /* Modifiers.swift in Sources */,
 				27EA0B4429ABC6B700A937ED /* StreamAttribute+CoreDataProperties.swift in Sources */,
 				27D62CA829B4BEA5009A5258 /* CoreDataEnvironmentObject.swift in Sources */,
@@ -680,9 +707,12 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 522EW6L79G;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -702,6 +732,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TVOS_DEPLOYMENT_TARGET = 16.0;
@@ -741,9 +772,12 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 522EW6L79G;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -756,6 +790,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TVOS_DEPLOYMENT_TARGET = 16.0;
@@ -768,14 +803,19 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ProFlix/ProFlix.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"ProFlix/Preview Content\"";
-				DEVELOPMENT_TEAM = 522EW6L79G;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ProFlix/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Viso;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -795,6 +835,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.asolanki.ProFlix;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -812,14 +853,19 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ProFlix/ProFlix.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"ProFlix/Preview Content\"";
-				DEVELOPMENT_TEAM = 522EW6L79G;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ProFlix/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Viso;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -839,6 +885,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.asolanki.ProFlix;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -853,11 +900,10 @@
 		2793870529A2847100718350 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 522EW6L79G;
+				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
@@ -876,11 +922,10 @@
 		2793870629A2847100718350 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 522EW6L79G;
+				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
@@ -899,10 +944,9 @@
 		2793870829A2847100718350 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 522EW6L79G;
+				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
@@ -921,10 +965,9 @@
 		2793870929A2847100718350 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 522EW6L79G;
+				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;

@@ -180,12 +180,11 @@ struct SeriesView: View {
     }
   }
 
+  // TODO: Replace with actual PlaybackURLBuilder
   private func buildStreamURL(for episode: XtreamEpisode) -> URL {
-    if let builder = appState.playbackURLBuilder {
-      return builder.seriesURL(streamId: episode.streamId)
-    }
-    // Fallback URL if credentials are missing or invalid
-    return URL(string: "https://example.com")!
+    // Placeholder - will be replaced with actual Xtream URL building logic
+    return URL(string: "https://example.com/series/\(episode.streamId)") ?? URL(
+      string: "https://example.com")!
   }
 }
 

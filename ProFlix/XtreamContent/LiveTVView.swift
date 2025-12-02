@@ -114,12 +114,11 @@ struct LiveTVView: View {
     }
   }
 
+  // TODO: Replace with actual PlaybackURLBuilder
   private func buildStreamURL(for channel: XtreamChannel) -> URL {
-    if let builder = appState.playbackURLBuilder {
-      return builder.liveURL(streamId: channel.streamId)
-    }
-    // Fallback URL if credentials are missing or invalid
-    return URL(string: "https://example.com")!
+    // Placeholder - will be replaced with actual Xtream URL building logic
+    return URL(string: "https://example.com/stream/\(channel.streamId)") ?? URL(
+      string: "https://example.com")!
   }
 }
 

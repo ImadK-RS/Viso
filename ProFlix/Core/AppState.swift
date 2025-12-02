@@ -32,10 +32,38 @@ final class AppState: ObservableObject {
   @Published var categories: [XtreamCategory] = []
   @Published var epgURL: String?
 
+  // MARK: - Helpers
+
+  /// Convenience builder for Xtream playback URLs, derived from stored credentials.
+  var playbackURLBuilder: PlaybackURLBuilder? {
+    guard
+      let base = xtreamURL,
+      let user = xtreamUsername,
+      let pass = xtreamPassword
+    else {
+      return nil
+    }
+    return PlaybackURLBuilder(baseURLString: base, username: user, password: pass)
+  }
+
+  /// XtreamService instance, created when credentials are available
+  private var xtreamService: XtreamService? {
+    guard
+      let urlString = xtreamURL,
+      let url = URL(string: urlString),
+      let username = xtreamUsername,
+      let password = xtreamPassword
+    else {
+      return nil
+    }
+    return XtreamService(baseURL: url, username: username, password: password)
+  }
+
   // MARK: - Initialization
   init() {
     // Check if credentials exist in Keychain on init
     checkExistingCredentials()
+    // For now, we always start unauthenticated and use demo data after login
   }
 
   // MARK: - Authentication Methods
@@ -54,11 +82,9 @@ final class AppState: ObservableObject {
       self.authenticationError = nil
     }
 
-    // TODO: Implement actual XtreamService login
-    // For now, simulate a login check
     do {
       // Validate URL format
-      guard URL(string: url) != nil else {
+      guard let baseURL = URL(string: url) else {
         await MainActor.run {
           self.authenticationError = "Invalid URL format"
           self.isAuthenticating = false
@@ -71,18 +97,46 @@ final class AppState: ObservableObject {
         self.xtreamURL = url
         self.xtreamUsername = username
         self.xtreamPassword = password
+        print("Xtream login: username=\(username), baseURL=\(url)")
       }
 
-      // TODO: Call XtreamService to authenticate and fetch initial data
-      // For now, simulate success
-      try await Task.sleep(nanoseconds: 1_000_000_000)  // 1 second delay
+      // Create service and authenticate
+      let service = XtreamService(baseURL: baseURL, username: username, password: password)
 
-      await MainActor.run {
-        self.isAuthenticated = true
-        self.isAuthenticating = false
+      do {
+        // Authenticate
+        let authResult = try await service.authenticate()
+        print("Authentication successful for user: \(authResult.username)")
+
+        // Fetch EPG URL if available
+        if let epgURL = authResult.epgURL {
+          await MainActor.run {
+            self.epgURL = epgURL
+          }
+        }
+
+        // Fetch initial data
+        await fetchAllData(service: service)
+
+        await MainActor.run {
+          self.isAuthenticated = true
+          self.isAuthenticating = false
+        }
+
+        return true
+      } catch let error as XtreamError {
+        await MainActor.run {
+          self.authenticationError = error.localizedDescription
+          self.isAuthenticating = false
+        }
+        return false
+      } catch {
+        await MainActor.run {
+          self.authenticationError = "Login failed: \(error.localizedDescription)"
+          self.isAuthenticating = false
+        }
+        return false
       }
-
-      return true
     } catch {
       await MainActor.run {
         self.authenticationError = error.localizedDescription
@@ -115,12 +169,182 @@ final class AppState: ObservableObject {
       self.dataLoadError = nil
     }
 
-    // TODO: Implement XtreamService data fetching
-    // This will fetch Live TV, Movies, Series, Categories, EPG URL
+    guard let service = xtreamService else {
+      await MainActor.run {
+        self.dataLoadError = "No active session"
+        self.isLoadingData = false
+      }
+      return
+    }
+
+    await fetchAllData(service: service)
 
     await MainActor.run {
       self.isLoadingData = false
     }
+  }
+
+  /// Fetch all data from Xtream API
+  private func fetchAllData(service: XtreamService) async {
+    do {
+      // Fetch all categories and streams in parallel
+      async let liveCategories = service.getLiveCategories()
+      async let vodCategories = service.getVODCategories()
+      async let seriesCategories = service.getSeriesCategories()
+      async let liveStreams = service.getLiveStreams()
+      async let vodStreams = service.getVODStreams()
+      async let seriesList = service.getSeries()
+
+      let (liveCats, vodCats, serCats, live, vod, series) = try await (
+        liveCategories, vodCategories, seriesCategories, liveStreams, vodStreams, seriesList
+      )
+
+      // Map categories
+      var allCategories: [XtreamCategory] = []
+      allCategories.append(
+        contentsOf: liveCats.map {
+          XtreamCategory(id: $0.categoryId, name: $0.categoryName, type: .liveTV)
+        })
+      allCategories.append(
+        contentsOf: vodCats.map {
+          XtreamCategory(id: $0.categoryId, name: $0.categoryName, type: .movies)
+        })
+      allCategories.append(
+        contentsOf: serCats.map {
+          XtreamCategory(id: $0.categoryId, name: $0.categoryName, type: .series)
+        })
+
+      // Map Live TV channels
+      let channels = live.map { stream in
+        let idString = stream.streamId.map { String($0) } ?? UUID().uuidString
+        return XtreamChannel(
+          id: idString,
+          name: stream.name,
+          logo: stream.streamIcon,
+          categoryId: stream.categoryId,
+          streamId: idString
+        )
+      }
+
+      // Map Movies
+      let movies = vod.map { stream in
+        let idString = stream.streamId.map { String($0) } ?? UUID().uuidString
+        return XtreamMovie(
+          id: idString,
+          title: stream.name,
+          cover: stream.streamIcon,
+          categoryId: stream.categoryId,
+          streamId: idString
+        )
+      }
+
+      // Map Series (no episodes yet – just basic info)
+      let mappedSeries: [XtreamSeries] = series.map { seriesItem in
+        let seriesIdString = seriesItem.seriesId.map { String($0) } ?? UUID().uuidString
+        return XtreamSeries(
+          id: seriesIdString,
+          name: seriesItem.name,
+          cover: seriesItem.cover,
+          categoryId: seriesItem.categoryId,
+          episodes: []  // placeholder for future episode support
+        )
+      }
+
+      await MainActor.run {
+        self.categories = allCategories
+        self.liveTVChannels = channels
+        self.movies = movies
+        self.series = mappedSeries
+      }
+
+      print(
+        "Loaded \(channels.count) channels, \(movies.count) movies, \(mappedSeries.count) series")
+    } catch {
+      await MainActor.run {
+        self.dataLoadError = "Failed to load data: \(error.localizedDescription)"
+      }
+      print("Error fetching data: \(error)")
+    }
+  }
+
+  // MARK: - Demo Data
+
+  /// Temporary demo data so the UI can be exercised without a real Xtream backend.
+  private func loadDemoData() {
+    // Categories
+    let liveCategory = XtreamCategory(id: "live-ent", name: "Entertainment", type: .liveTV)
+    let liveNewsCategory = XtreamCategory(id: "live-news", name: "News", type: .liveTV)
+    let moviesCategory = XtreamCategory(id: "mov-action", name: "Action", type: .movies)
+    let seriesCategory = XtreamCategory(id: "ser-drama", name: "Drama", type: .series)
+
+    self.categories = [liveCategory, liveNewsCategory, moviesCategory, seriesCategory]
+
+    // Live TV
+    self.liveTVChannels = [
+      XtreamChannel(
+        id: "ch1",
+        name: "ProFlix Live 1",
+        logo: "https://i.imgur.com/XgejLKw.png",
+        categoryId: liveCategory.id,
+        streamId: "live1"
+      ),
+      XtreamChannel(
+        id: "ch2",
+        name: "World News HD",
+        logo: "https://i.imgur.com/bcHP3Vg.png",
+        categoryId: liveNewsCategory.id,
+        streamId: "live2"
+      ),
+    ]
+
+    // Movies
+    self.movies = [
+      XtreamMovie(
+        id: "m1",
+        title: "Demo Movie: The Beginning",
+        cover: "https://image.tmdb.org/t/p/w500/8YFL5QQVPy3AgrEQxNYVSgiPEbe.jpg",
+        categoryId: moviesCategory.id,
+        streamId: "mov1"
+      ),
+      XtreamMovie(
+        id: "m2",
+        title: "Demo Movie: The Sequel",
+        cover: "https://image.tmdb.org/t/p/w500/5P8SmMzSNYikXpxil6BYzJ16611.jpg",
+        categoryId: moviesCategory.id,
+        streamId: "mov2"
+      ),
+    ]
+
+    // Series
+    let demoEpisodes = [
+      XtreamEpisode(
+        id: "e1",
+        title: "Pilot",
+        seasonNumber: 1,
+        episodeNumber: 1,
+        streamId: "ser1e1"
+      ),
+      XtreamEpisode(
+        id: "e2",
+        title: "Second Wind",
+        seasonNumber: 1,
+        episodeNumber: 2,
+        streamId: "ser1e2"
+      ),
+    ]
+
+    self.series = [
+      XtreamSeries(
+        id: "s1",
+        name: "Demo Series",
+        cover: "https://image.tmdb.org/t/p/w500/7yx20ZQwF7C0JgWY1e7Agk4D9mu.jpg",
+        categoryId: seriesCategory.id,
+        episodes: demoEpisodes
+      )
+    ]
+
+    // EPG URL placeholder
+    self.epgURL = "https://example.com/demo-epg.xml"
   }
 }
 

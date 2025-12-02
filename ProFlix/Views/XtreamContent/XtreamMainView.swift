@@ -12,6 +12,9 @@ struct XtreamMainView: View {
   @EnvironmentObject var appState: AppState
   @EnvironmentObject var router: NavRouter
   @State private var selectedTab: ContentTab = .liveTV
+  @State private var liveTVPath = NavigationPath()
+  @State private var moviesPath = NavigationPath()
+  @State private var seriesPath = NavigationPath()
 
   enum ContentTab: String, CaseIterable {
     case liveTV = "Live TV"
@@ -32,25 +35,66 @@ struct XtreamMainView: View {
 
   var body: some View {
     TabView(selection: $selectedTab) {
-      LiveTVView()
-        .tabItem {
-          Label(ContentTab.liveTV.rawValue, systemImage: ContentTab.liveTV.systemImage)
-        }
-        .tag(ContentTab.liveTV)
+      NavigationStack(path: $liveTVPath) {
+        LiveTVView()
+          .navigationDestination(for: NavDestination.self) { destination in
+            switch destination {
+            case .AllPlaylistView:
+              AllPlaylistView()
+            case .AllQuickListView:
+              AllQuickPlayListView()
+            case .StreamListView(let library):
+              StreamListView(library: library)
+            case .VideoPlayerView(let url, let title):
+              VideoPlayerView(url: url, title: title)
+            }
+          }
+      }
+      .tabItem {
+        Label(ContentTab.liveTV.rawValue, systemImage: ContentTab.liveTV.systemImage)
+      }
+      .tag(ContentTab.liveTV)
 
-      MoviesView()
-        .tabItem {
-          Label(ContentTab.movies.rawValue, systemImage: ContentTab.movies.systemImage)
-        }
-        .tag(ContentTab.movies)
+      NavigationStack(path: $moviesPath) {
+        MoviesView()
+          .navigationDestination(for: NavDestination.self) { destination in
+            switch destination {
+            case .AllPlaylistView:
+              AllPlaylistView()
+            case .AllQuickListView:
+              AllQuickPlayListView()
+            case .StreamListView(let library):
+              StreamListView(library: library)
+            case .VideoPlayerView(let url, let title):
+              VideoPlayerView(url: url, title: title)
+            }
+          }
+      }
+      .tabItem {
+        Label(ContentTab.movies.rawValue, systemImage: ContentTab.movies.systemImage)
+      }
+      .tag(ContentTab.movies)
 
-      SeriesView()
-        .tabItem {
-          Label(ContentTab.series.rawValue, systemImage: ContentTab.series.systemImage)
-        }
-        .tag(ContentTab.series)
+      NavigationStack(path: $seriesPath) {
+        SeriesView()
+          .navigationDestination(for: NavDestination.self) { destination in
+            switch destination {
+            case .AllPlaylistView:
+              AllPlaylistView()
+            case .AllQuickListView:
+              AllQuickPlayListView()
+            case .StreamListView(let library):
+              StreamListView(library: library)
+            case .VideoPlayerView(let url, let title):
+              VideoPlayerView(url: url, title: title)
+            }
+          }
+      }
+      .tabItem {
+        Label(ContentTab.series.rawValue, systemImage: ContentTab.series.systemImage)
+      }
+      .tag(ContentTab.series)
     }
-    .navigationBarTitleDisplayMode(.inline)
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {
         Menu {

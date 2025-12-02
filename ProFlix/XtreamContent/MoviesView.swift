@@ -166,12 +166,11 @@ struct MoviesView: View {
     }
   }
 
+  // TODO: Replace with actual PlaybackURLBuilder
   private func buildStreamURL(for movie: XtreamMovie) -> URL {
-    if let builder = appState.playbackURLBuilder {
-      return builder.movieURL(streamId: movie.streamId)
-    }
-    // Fallback URL if credentials are missing or invalid
-    return URL(string: "https://example.com")!
+    // Placeholder - will be replaced with actual Xtream URL building logic
+    return URL(string: "https://example.com/movie/\(movie.streamId)") ?? URL(
+      string: "https://example.com")!
   }
 }
 
@@ -181,31 +180,31 @@ struct MovieCardView: View {
   let movie: XtreamMovie
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      // Movie Poster/Cover
-      WebImage(url: URL(string: movie.cover ?? ""))
-        .resizable()
-        .placeholder {
-          ZStack {
-            Color.systemGrayColor5
-            Image(systemName: "film.fill")
-              .font(.system(size: 40))
-              .foregroundColor(.secondary)
-          }
+        VStack(alignment: .leading, spacing: 8) {
+            // Movie Poster/Cover
+            WebImage(url: URL(string: movie.cover ?? ""))
+                .resizable()
+                .placeholder {
+                    ZStack {
+                        Color.systemGrayColor5
+                        Image(systemName: "film.fill")
+                            .font(.system(size: 40))
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .transition(.fade(duration: 0.3))
+                .aspectRatio(contentMode: .fill)
+                .frame(height: 200)
+                .cornerRadius(12)
+                .clipped()
+            
+            // Movie Title
+            Text(movie.title)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
         }
-        .transition(.fade(duration: 0.3))
-        .aspectRatio(contentMode: .fill)
-        .frame(height: 200)
-        .cornerRadius(12)
-        .clipped()
-
-      // Movie Title
-      Text(movie.title)
-        .font(.subheadline)
-        .fontWeight(.medium)
-        .lineLimit(2)
-        .multilineTextAlignment(.leading)
-    }
   }
 }
 
